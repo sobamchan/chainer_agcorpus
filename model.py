@@ -22,7 +22,7 @@ class MLP(Model):
         return F.softmax_cross_entropy(x, t), F.accuracy(x, t)
 
     def fwd(self, x, train):
-        h = self.fc1(x)
-        h = self.fc2(h)
+        h = F.relu(self.fc1(x))
+        h = F.relu(self.fc2(h))
         h = self.fc3(h)
         return h
