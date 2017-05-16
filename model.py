@@ -22,7 +22,33 @@ class MLP(Model):
         return F.softmax_cross_entropy(x, t), F.accuracy(x, t)
 
     def fwd(self, x, train):
-        h = F.relu(self.fc1(x))
+        h = self.embed(x)
+        h = F.relu(self.fc1(h))
         h = F.relu(self.fc2(h))
         h = self.fc3(h)
+        return h
+
+class CNN(Model):
+
+    def __init__(self, class_n, vocab_n, d, vocab, fpath):
+        super(CNN, self).__init__(
+            embed=PreTrainedEmbedId(vocab_n, d, vocab, fpath, False),
+            conv1=L.Convolution2D(1, 256, (1, 3)),
+            conv2=L.Convolution2D(256, 256, (1, 3)),
+            conv3=L.Convolution2D(256, 256, (1, 3)),
+            fc=L.Linear(None, class_n)
+        )
+
+    def __call__(self, x, t, train=True):
+        x = self.fwd(x, train)
+        return F.softmax_cross_entropy(x, t), F.accuracy(x, t)
+
+    def fwd(self, x, train):
+        h = self.embed(x)
+        batch, height, width = h.shape
+        h = F.reshape(h, (batch, 1, height, width))
+        h = self.conv1(h)
+        h = self.conv2(h)
+        h = self.conv3(h)
+        h = self.fc(h)
         return h
