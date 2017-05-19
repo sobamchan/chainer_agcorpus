@@ -1,5 +1,5 @@
 from sobamchan.sobamchan_agcorpus import train
-from model import MLP, CNN
+from model import MLP, CNN, FixedEmbedCNN
 
 def main():
     train(CNN)

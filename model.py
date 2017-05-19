@@ -53,6 +53,34 @@ class CNN(Model):
         h = self.fc(h)
         return h
 
+class FixedEmbedCNN(Model):
+
+    def __init__(self, class_n, vocab_n, d, vocab, fpath):
+        embed=PreTrainedEmbedId(vocab_n, d, vocab, fpath, False),
+        W = embed[0].W
+        super(FixedEmbedCNN, self).__init__(
+            conv1=L.Convolution2D(1, 16, (3, 1)),
+            conv2=L.Convolution2D(16, 3, (3, 1)),
+            fc=L.Linear(None, class_n)
+        )
+        self.embedW = W
+
+
+    def __call__(self, x, t, train=True):
+        x = self.fwd(x, train)
+        return F.softmax_cross_entropy(x, t), F.accuracy(x, t)
+
+    def fwd(self, x, train):
+        embedW = self.embedW
+        h = F.embed_id(x, embedW)
+        batch, height, width = h.shape
+        h = F.reshape(h, (batch, 1, height, width))
+        h = self.conv1(h)
+        h = self.conv2(h)
+        h = F.max_pooling_2d(h, (1, 3))
+        h = self.fc(h)
+        return h
+
 
 class ResCNN(Model):
 
