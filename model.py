@@ -99,3 +99,39 @@ def test_ResCNN():
     x = Variable(np.array([[1,2,2,2,3,2,1,2,3,2,1,2,3,2,], [2,3,3,4,1,2,3,4,2,2,3,1,2,3]]).astype(np.int32))
     t = Variable(np.array([0, 1]).astype(np.int32))
     e, a = rescnn(x, t)
+
+
+
+
+class RNN(Model):
+
+    def __init__(self, class_n, vocab_n, d, vocab, fpath):
+        super(RNN, self).__init__(
+            embed=PreTrainedEmbedId(vocab_n, d, vocab, fpath, False),
+            lstm=L.LSTM(None, 300),
+            fc=L.Linear(None, class_n)
+        )
+
+    def __call__(self, x, t, train=True):
+        x = self.fwd(x, train)
+        return F.softmax_cross_entropy(x, t), F.accuracy(x, t)
+
+    def fwd(self, x, train=True):
+        h = self.embed(x)
+        h_b, h_h, h_w = h.shape
+        for i in range(h_h):
+            lstm_h = self.lstm(h[:, i, :])
+        h = self.fc(F.relu(lstm_h))
+        return h
+
+def testRNN():
+    vocab = Vocabulary()
+    fpath = '/Users/sochan/project/ML/NLP/datas/word2vec_text8.txt'
+    words = ['dog', 'cat', 'cow', 'sheep', 'sobamchan']
+    for word in words:
+        vocab.new(word)
+    rnn = RNN(2, 5, 300, vocab, fpath)
+
+    x = Variable(np.array([[1,2,2,2,3,2,1,2,3,2,1,2,3,2], [2,3,3,4,1,2,3,4,2,2,3,1,2,3]]).astype(np.int32))
+    t = Variable(np.array([0, 1]).astype(np.int32))
+    e, a = rnn(x, t)
