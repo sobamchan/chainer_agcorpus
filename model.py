@@ -72,6 +72,8 @@ class FixedEmbedCNN(Model):
 
     def fwd(self, x, train):
         embedW = self.embedW
+        if np.ndarray is not type(x.data):
+            embedW.to_gpu()
         h = F.embed_id(x, embedW)
         batch, height, width = h.shape
         h = F.reshape(h, (batch, 1, height, width))
@@ -108,6 +110,8 @@ class ResCNN(Model):
         batch, h_c, h_h, h_w = h.shape
         _, org_c, org_h, org_w = org.shape
         if org_h != h_h:
+            if np.ndarray is not type(x.data):
+                pad.to_gpu()
             pad = Variable(np.zeros((batch, h_c, org_h - h_h, h_w)).astype(np.float32), volatile=org.volatile)
             h = F.concat((h, pad), 2)
 
