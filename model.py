@@ -110,9 +110,9 @@ class ResCNN(Model):
         batch, h_c, h_h, h_w = h.shape
         _, org_c, org_h, org_w = org.shape
         if org_h != h_h:
+            pad = Variable(np.zeros((batch, h_c, org_h - h_h, h_w)).astype(np.float32), volatile=org.volatile)
             if np.ndarray is not type(x.data):
                 pad.to_gpu()
-            pad = Variable(np.zeros((batch, h_c, org_h - h_h, h_w)).astype(np.float32), volatile=org.volatile)
             h = F.concat((h, pad), 2)
 
         h += org
