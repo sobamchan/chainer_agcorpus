@@ -140,7 +140,7 @@ class RNN(Model):
     def __init__(self, class_n, vocab_n, d, vocab, fpath):
         super(RNN, self).__init__(
             embed=PreTrainedEmbedId(vocab_n, d, vocab, fpath, False),
-            lstm=L.LSTM(None, 300),
+            lstm=L.LSTM(None, 50),
             fc=L.Linear(None, class_n)
         )
 
