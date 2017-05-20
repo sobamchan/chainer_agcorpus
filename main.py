@@ -1,8 +1,8 @@
 from sobamchan.sobamchan_agcorpus import train
-from model import MLP, CNN, FixedEmbedCNN, ResCNN
+from model import MLP, CNN, FixedEmbedCNN, ResCNN, RNN
 
 def main():
-    train(ResCNN)
+    train(RNN)
 
 if __name__ == '__main__':
     main()
