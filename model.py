@@ -156,6 +156,9 @@ class RNN(Model):
         h = self.fc(F.relu(lstm_h))
         return h
 
+    def reset_state(self):
+        self.lstm.reset_state()
+
 def testRNN():
     vocab = Vocabulary()
     fpath = '/Users/sochan/project/ML/NLP/datas/word2vec_text8.txt'
@@ -163,6 +166,7 @@ def testRNN():
     for word in words:
         vocab.new(word)
     rnn = RNN(2, 5, 300, vocab, fpath)
+    rnn.reset_state()
 
     x = Variable(np.array([[1,2,2,2,3,2,1,2,3,2,1,2,3,2], [2,3,3,4,1,2,3,4,2,2,3,1,2,3]]).astype(np.int32))
     t = Variable(np.array([0, 1]).astype(np.int32))
